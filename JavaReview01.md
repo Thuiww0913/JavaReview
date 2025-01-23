@@ -258,6 +258,408 @@ print('\U0001F60A')    # 输出: 😊
 
 
 
+***
+
+## 二、Java基础：
+
+### 2.1 名词解析：
+
+**基础名词解析：** *关键字、标识符、变量*
+
+* 关键字：Java语言赋予了特殊含义，用作专门用途的字符串  
+  * 示例：class, public, static, void, int , long, ... ...等等已经被 Java定义好的单词
+* 标识符：Java中变量名、方法名、类名、包名、常量名等，官方命名或自身命名使用的字符序列  
+  * 规范&示例：
+    * 包名：所有单词所有字母均小写：aaabbbccc  
+      例如：java.long、com.tang.bean
+    * 类名、接口名：所有单词首字母大写：AaaBbbCcc  
+      例如：String、System、HelloWorld
+    * 变量名、方法名：第一个单词首字母小写，其余单词首字母大写：aaaBbbCcc  
+      例如：name、age、studentCategory、method()、getName()
+    * 常量名：所有单词所有字母均大写，单词间下划线分割：AAA_BBB_CCC  
+      例如：MAX_SIZE、DEFAULT_VALUE
+* 变量：
+  * 构成：数据类型、变量名、变量值
+  * 格式：`数据类型 变量名 = 变量值`
+
+### 2.2 数据类型：
+
+Java中数据类型分为两大类：
+
+* 基本数据类型（8个）：**整形：**byte, short, int, long, **浮点型：**float, double, **字符型：**char, **布尔型：**boolean
+* 引用数据类型：数组 []、类 class、接口 interface、枚举 enum、注解 @interface、记录 record
+
+**整形：**
+
+* Java中 **整形常量** 默认为 **int **型，即在各个变量之间运算 JVM默认以 int型来对整形进行判断。（对于整形常量的赋值，并不受影响，只要不超过其整形数据类型范围即可）
+
+  ```java
+  byte b1 = 127;	//ok
+  byte b2 = 128;	//compile error:超出byte范围
+  
+  byte b3 = 1;
+  byte b4 = 2;
+  byte b5 = b3 + b4;	//compile error:损失精度：不能将int型赋给byte型
+  byte b6 = 1 + b4;	//compile error:损失精度：不能将int型赋给byte型
+  byte b7 = b3 + 2;	//compile error:损失精度：不能将int型赋给byte型
+  byte b8 = 1 + 127;	//compile error:超出byte范围
+  byte b9 = 1 + 2;	//ok:变量之间，或变量与常数之间相加减，因为JVM不能判断其是否超出默认范围，所以统一使用 int型来判断
+  
+  long l1 = 12345678912;	//compile error: 超出int范围
+  long l2 = 12345678912L;	//ok: 给数据类型long赋值时，因为JVM默认判断的是int型，所以当变量值超过int范围就会报错整数过大，这时候若要存储long型变量值，需要在变量值后面加 L ,表示这是一个long型变量值
+  ```
+
+**浮点型：**
+
+* Java中**浮点型常量**默认为**double**型，且因为double是双精度比float单精度的精度要高，并且不同于整形常量直接赋值，一个浮点型常量的直接赋值，系统不会根据当前浮点型类型进行判断，若没有特殊说明统一默认为double类型
+
+  ```java
+  float f1 = 1.0;	//compile error:损失精度：不能将double型赋给float型
+  float f2 = 1.0f;	//ok: 对于浮点型变量值要想赋值给float变量，必须添加f声明其为浮点型变量值
+  double d = 1.0;	//ok
+  
+  float f3 = 3.45f;
+  float f4 = 6.8f;
+  float f5 = f3 + f4;	//compile error:损失精度：不能将double型赋给float型
+  float f6 = 3.45f+ f4;	//compile error:损失精度：不能将double型赋给float型
+  float f7 = f3 + 6.8f;	//compile errorr:损失精度：不能将double型赋给float型
+  float f8 = 3.45f + 6.8f;	//ok
+  ```
+
+**字符型（char）:**
+
+* **概念：**Java中 char默认两字节，且 Java中内部编码默认采用 utf-16编码存储字符，所以，char类型存储的字符均为 utf-16的基本多文种平面BMP字符，要想存储Unicode字符集中除了基本多文种平面字符之外的字符（如：生僻字，表情符号，等），需要使用char数组或者String字符串存储。
+
+* **存储方式：**
+
+  * 通过字符存储：  
+    ```java
+    char c1 = 'a'; 		//ok
+    char c2 = '汉';		//ok
+    char c3 = '😊';		//error: 😊占据4字节，超出char型范围
+    ```
+
+  * 通过utf-16编码值存储（使用转义字符`\u`）：  
+    ```java
+    char c1 = '\u0023';		//ok
+    char c2 = '\u6C49';		//ok
+    char c = '\uD83D\uDE0A';	//compile error: \uD83D\uDE0A占据4字节，超出char型范围
+    
+    //借助数组或者String类型来存储utf-16中的增补字符
+    char[] cArray = new char[]{'\uD83D', '\uDE0A'};
+    String str = new String("\uD83D\uDE0A");
+    ```
+
+  * 使用转义字符来存储特殊字符常量：  
+    ```java
+    char c1 = '\n';
+    char c2 = '\t';
+    ```
+
+**布尔型（boolean）:**
+
+* boolean类型只有 `true`和 `false`两种变量值，在编写时，只能赋值 `true`或 `false`两种变量值给 boolean类型变量，不能使用 0或者 1这种形式（不同于 C语言）
+* 拓展：Java虚拟机中没有任何供boolean值专用的字节码指令，Java语言表达所操作的boolean值，在编译之后都使用java虚拟机中的int数据类型来代替：true用1表示，false用0表示。——《java虚拟机规范 8版》
+
+
+
+<mark>**<补充>：**</mark> **基本数据类型之间运算规则：**
+
+* 自动类型提升（自动）：
+
+  * 容量小的数据类型可以自动提升为容量大的数据类型（即：可以将容量下数据类型变量直接赋值赋值给容量大数据类型变量）
+
+  * 规则：  
+    ![image-20250123152440631](JavaReview01.assets/image-20250123152440631.png)
+
+  * 规则&示例：  
+
+    （1）当把存储范围小的值（常量值、变量的值、表达式计算的结果值）赋值给了存储范围大的变量时
+
+    ```java
+    int i = 'A';//ok: char自动升级为int，即：将字符的utf-16编码值赋值给i变量了
+    double d = 10;//ok: int自动升级为double
+    long num = 1234567; //ok: int自动升级为long
+    double d2 = 1.0f;	//ok: float自动升级为double
+    ```
+
+    （2）当存储范围小的数据类型与存储范围大的数据类型变量一起混合运算时，会**按照其中最大的类型运算**。
+
+    ```java
+    int i = 1;
+    byte b = 1;
+    double d = 1.0;
+    
+    int sumI = i + b + d;	//compile error: 损失精度：不能将double型赋给int型
+    float sumF = i + b + d;	//compile error: 损失精度：不能将double型赋给float型
+    double sumD = i + b + d;//ok：混合运算，升级为double
+    ```
+
+
+* 强制类型转换（手动）：
+
+  * 若要**避免**上述的**编译错误（Compile Error）**，就必须强制类型转换。使用强制类型转换可以避免程序在编译阶段(javac)不会报错，但是，强制类型转换可能会丢失精度，所以要进行判断之后来得出是否要强制类型转换。
+
+  * **转换格式：**
+
+    ```java
+    数据类型1 变量名 = (数据类型1)被强转数据值;  //()中的数据类型必须<=变量值的数据类型
+    ```
+
+    （注意）：当把存储范围大的值（常量值、变量的值、表达式计算的结果值）强制转换为存储范围小的变量时，可能会`损失精度`或`溢出`。
+
+    ```java
+    int i = (int)3.14;//损失精度
+    
+    double d = 1.2;
+    int num = (int)d;//损失精度
+    
+    int i = 200;
+    byte b = (byte)i;//溢出
+    
+    //理想情况：
+    byte b1 = 3;
+    byte b2 = 4;
+    byte b3 = (byte)(b1 + b2);	//ok: 安全转换
+    
+    float f = (float)1.0;		//ok: 安全转换
+    ```
+
+
+
+
+**引用数据类型：**
+
+即：通过指针调用来索引数据（String类型，数组[]类型，等等..）
+Java中的引用数据类型隐藏指针的特性，使得我们不必显示的去定义指针（不同于 C语言）
+
+* **Java（`new 类名()`）：**
+
+  ```java
+  class Student{	//类：默认就是引用类型，所以不需要在显性的强调指针问题
+      int id;
+      String name;
+      char gender;
+  }
+  
+  public class Test{
+      public static void main(String[] args){
+          Student stu01 = new Student();	//使用“ new 类名() ”的方式，自动定义为引用类型
+          stu01.id = 2020001;				//引用类型变量，再调取其内部成员变量时，可以采用“ 变量名.成员变量名 ”的方式
+          stu01.name = "Tom";
+          char gender = '男';
+          
+          System.out.println("ID:" + stu01.id + 
+                             "\nName:" + stu01.name +
+                             "\nGender:" + stu01.gender);
+      }
+  }
+  ```
+
+* **C语言（`(结构体名 *)malloc(sizeof(结构体名))`）：**
+
+  ```c
+  #include<stdio.h>
+  
+  typedef struct Student{
+      int id;
+      char * name;
+      char gender;
+  }Student, *PStudent;	//通过 * 的方式来显性的说明指针
+  
+  int main(void){
+      //静态定义（不推荐）：
+      Student stu;
+      stu.id = 2020000;
+      stu01.name = (char*)malloc(sizeof(char)*3);
+      stu01.name[0] = 'A';
+      stu01.name[1] = 'd';
+      stu01.name[2] = 'm';
+      stu01.gender = 'F';
+      
+      //动态定义（引用类型）：
+      PStudent stu01 = (PStudent)malloc(sizeof(Student));	//通过 malloc方式动态分配内存，用过指针方式显性的去调用这块内存
+      stu01->id = 2020001;	//使用“ 指针变量名->成员变量名 ”的方式调用动态内存中的成员变量
+      stu01->name = (char*)malloc(sizeof(char)*3);
+      stu01->name[0] = 'T';
+      stu01->name[1] = 'o';
+      stu01->name[2] = 'm';
+      stu01->gender = 'M';
+      
+      printf("...");
+      return 0;
+  }
+  ```
+
+
+
+### 2.3 数组
+
+#### 2.3.1 一维数组：
+
+**数组基本概念：**  
+
+* 数组作为**引用数据类型**，其**继承于Object类**。不同其他引用类型（String类，自建的类，等等），数组作为引用类型，其并不会直接体现于Java源码中，也不用程序员手动定义，其由编译后至 JVM中运行，**由 JVM自动生成**声明的相关数据类型（基础/引用）的数组的类对象，并且设置成员变量 `final int length;`,用来记录对应数组实例化的对象的定长，且是 `final`属性，不可更改。Java中的数组一旦定义，其长度则不可被修改。在运行阶段，JVM会检查代码中的定义的数组是否出现越界问题。若出现越界数组则会抛出异常  
+  <示例>：以自定义引用数据类型 MyClass 类型 和 基本数据类型 int型 举例：
+
+  ```java
+  //一般引用类，调用toString()输出哈希值：
+  MyClass myClass = new MyClass();
+  System.out.println(myClass);	//com.arrayexercise.exer01.MyClass@12a3a380
+  
+  //一维数组：
+  MyClass[] myClasses = new MyClass[5];
+  int[] intArray = new int[5];
+  
+  System.out.println(intArray);	//[I@12a3a380
+  System.out.println(myClasses);	//[Lcom.arrayexercise.exer01.MyClass;@29453f44
+  
+  //二维数组：
+  double[][] doubleArray = new double[3][5];
+  String[][] strArray = new String[5][];
+  
+  System.out.println(doubleArray);	//[[D@5cad8086
+  System.out.println(strArray);		//[[Ljava.lang.String;@6e0be858
+  ```
+
+  以 `[Lcom.arrayexercise.exer01.MyClass;@29453f44`进行说明：
+
+  * `[`：表示为数组引用类型，`[`：一维数组，`[[`：二维数组，依次类推
+  * `L`：表示以引用数据类型建立数组，若是以基本数据类型生成数组则不显示，如：`int[]`对应的： `[I@12a3a380`
+  * `com.arrayexercise.exer01.MyClass`：表示建立该数组的原始引用数据类型的包名与类名，包名：`com.arrayexercise.exer01`，类名：`MyClass`
+  * `@29453f44`：表示当前数组类型实例化的对象的地址哈希值。
+
+**如何定义：**（以 int[] 为例）
+
+* 方式一：  静态定义：（由 JVM自动判断长度）
+  ```java
+  int[] array1 = new int[]{1, 2, 3, 4, 5};
+  
+  //也可以先定义，后创建：
+  int[] array2;
+  array2 = new int[]{1, 2, 3, 4, 5};
+  ```
+
+* 方式二： 动态定义（手动定义长度）
+
+  Java中使用这种定义方式，JVM会自动初始化：整形：0，浮点型：0.0，字符型：\u0000，布尔型：false
+
+  ```java
+  int[] array1 = new int[5];
+  
+  //也可以先定义，后创建：
+  int[] array2;
+  array2 = new int[5];
+  ```
+
+不论是方式一，还是方式二，一旦数组被定义且实例化创建，那么创建的数组的长度就确定了。
+
+**对比C语言：**
+
+* C语言的数组也是指针引用类型，只不过是单纯的指针索引：
+
+  ```c
+  int * array = (int*)malloc(sizeof(int) * 5);
+  //C语言是单纯的指针索引，所以自身并没有length变量来记录数组的定长，需要手动计算
+  int length = sizeof(array)/sizeof(array[0]);
+  for(int i = 0; i < length; i++){
+      visit(array[i]);
+  }
+  ```
+
+* Java中数组也作为引用类型，其采用一个类进行封装，且含有 length属性，其由 JVM依据创建对应数组的一开始长度来进行赋值，进行一个实例化数组对象长度的记录。
+
+  ```java
+  int[] array = new int[5];
+  
+  for(int i = 0; i < array.length; i++){
+      visit(array[i]);
+  }
+  ```
+
+#### 2.3.2 二维数组：
+
+**二维数组概念：**
+
+* Java中数组同 C语言中的数组本质一样，只不过Java中引入了类添加了length属性，隐藏了指针。所以二维数组也是同理，C语言使用了二级指针索引一级的方式创建二维数组，Java中也是通过数组里面装数组的方式实现二维数组，只不过在 JVM帮我们创建数组类对象时，会将二维数组声明为`[[`型，如上面的：`double[][] doubleArray = new double[3][5];`对应的：`[[D@5cad8086`
+
+  ![第05章_数组.jpeg](JavaReview01.assets/第05章_数组.jpeg.png)
+
+**如何定义：**（以 `int[][]` 为例）
+
+* 方式一：  静态定义：（由 JVM自动判断长度）
+
+  ```java
+  int[][] array1 = new int[][]{{1, 2, 3, 4, 5},
+                               {5, 7, 8, 9, 10},
+                               {11, 12, 13, 14, 15}};
+  
+  //也可以先定义，后创建：
+  int[][] array2;
+  array2 = new int[][]{{1, 2, 3, 4, 5},
+                       {5, 7, 8, 9, 10},
+                       {11, 12, 13, 14, 15}};
+  ```
+
+* 方式二： 动态定义（手动定义长度）
+
+  Java中使用这种定义方式，JVM会自动初始化：整形：0，浮点型：0.0，字符型：\u0000，布尔型：false
+
+  ```java
+  int[][] array1 = new int[3][5];
+  
+  //也可以先定义，后创建：
+  int[] array2;
+  array2 = new int[3][5];
+  
+  //这种前确定先确定二维数组长度的也可以：
+  int[][] array3 = new int[3][];	//此时一维数组索引均为 null
+  for (int i = 0; i < array3.length; i++){
+      array3[i] = new int[5];
+  }
+  ```
+
+不论是方式一，还是方式二，一旦数组被定义且实例化创建，那么创建的数组的长度就确定了。
+
+**对比C语言：**
+
+* C语言的动态二维数组也是指针引用类型，只不过是单纯的指针索引：
+
+  ```c
+  int ** array = (int**)malloc(sizeof(int*) * 3);
+  int length01 = sizeof(array)/sizeof(array[0]);
+  for(int i = 0; i < length01; i++){
+      array[i] = (int*)malloc(sizeof(int) * 5);
+  }
+  int length02 = sizeof(array[0])/sizeof(array[0][0]);
+  
+  for(int i = 0; i < length01; i++){
+      for(int j = 0; j < length02; j++){
+          visit(array[i]);
+      }
+  }
+  ```
+
+* Java中数组也作为引用类型，其采用一个类进行封装，且含有 length属性，其由 JVM依据创建对应数组的一开始长度来进行赋值，进行一个实例化数组对象长度的记录。
+
+  ```java
+  int[][] array = new int[3][5];
+  
+  for(int i = 0; i < array.length; i++){
+      for(int j = 0; j < array[i].length; j++){
+          visit(array[i]);
+      }
+  }
+  ```
+
+
+
+
+
+
+
+
+
 
 
 
